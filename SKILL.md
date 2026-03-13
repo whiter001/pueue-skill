@@ -79,6 +79,9 @@ pueue add -w /path/to/project "./script.sh"
 # 立即开始
 pueue add -i "npm run dev"
 
+# 立即开始并使用命令分隔符 (-- 防止命令中的参数与pueue参数冲突)
+pueue add -i -- ls
+
 # 创建为暂存状态
 pueue add -s "npm install"
 
@@ -93,6 +96,25 @@ pueue add -o 10 "important-task"
 
 # 仅返回任务ID
 pueue add -p "npm install"
+```
+
+**关于命令分隔符 `--`**：
+
+`--` 是命令行标准分隔符，用于告知 `pueue` 解析器：后面的内容是实际要执行的命令，而不是 `pueue add` 的选项。
+
+| 写法 | 说明 |
+|------|------|
+| `pueue add "ls -la"` | `"ls -la"` 作为字符串整体传递 |
+| `pueue add -- ls -la` | `ls -la` 被解析为命令 `ls` 加参数 `-la` |
+
+**使用场景**：当命令本身包含可能与 `pueue` 选项混淆的参数时，必须加 `--`。
+
+```bash
+# 必须加 --，否则 --force 会被误认为 pueue 选项
+pueue add -- git pull --force
+
+# 命令参数不含 - 开头的字符时，可以省略 --
+pueue add "echo hello"
 ```
 
 **支持的延迟格式**：
@@ -507,7 +529,10 @@ pueue parallel -g build 2
     pueue pause -wa
     ```
 
-## 注意事项
+11. **重启失败的任务**：
+    ```bash
+    pueue restart --all-failed
+    ```
 
 - 确保 `pueued` 守护进程正在运行
 - 任务 ID 在重启后会变化（除非使用 `-i, --in-place`）
