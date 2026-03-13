@@ -62,40 +62,40 @@ pueued -d
 
 ```bash
 # 基本用法
-pueue add "npm install"
+pueue add -- npm install
 
 # 带标签
-pueue add -l "install" "npm install"
+pueue add -l install -- npm install
 
 # 带分组
-pueue add -g node "npm install"
+pueue add -g node -- npm install
 
 # 延迟执行 (30分钟后)
-pueue add -d "30 minutes" "make build"
+pueue add -d "30 minutes" -- make build
 
 # 指定工作目录
-pueue add -w /path/to/project "./script.sh"
+pueue add -w /path/to/project -- ./script.sh
 
 # 立即开始
-pueue add -i "npm run dev"
+pueue add -i -- npm run dev
 
 # 立即开始并使用命令分隔符 (-- 防止命令中的参数与pueue参数冲突)
 pueue add -i -- ls
 
 # 创建为暂存状态
-pueue add -s "npm install"
+pueue add -s -- npm install
 
 # 转义特殊字符
-pueue add -e "echo hello world"
+pueue add -e -- "echo hello world"
 
 # 等待其他任务完成后执行
-pueue add -a 1 2 3 "npm run build"
+pueue add -a 1 2 3 -- npm run build
 
 # 优先级 (数字越大越优先)
-pueue add -o 10 "important-task"
+pueue add -o 10 -- important-task
 
 # 仅返回任务ID
-pueue add -p "npm install"
+pueue add -p -- npm install
 ```
 
 **关于命令分隔符 `--`**：
@@ -104,7 +104,6 @@ pueue add -p "npm install"
 
 | 写法 | 说明 |
 |------|------|
-| `pueue add "ls -la"` | `"ls -la"` 作为字符串整体传递 |
 | `pueue add -- ls -la` | `ls -la` 被解析为命令 `ls` 加参数 `-la` |
 
 **使用场景**：当命令本身包含可能与 `pueue` 选项混淆的参数时，必须加 `--`。
@@ -115,6 +114,9 @@ pueue add -- git pull --force
 
 # 命令参数不含 - 开头的字符时，可以省略 --
 pueue add "echo hello"
+
+# 建议始终使用 -- 以保持一致性
+pueue add -- echo hello
 ```
 
 **支持的延迟格式**：
@@ -481,27 +483,27 @@ pueue parallel -g build 2
 
 1. **后台运行 npm install 并添加标签**：
    ```bash
-   pueue add -l "npm-install" "npm install"
+   pueue add -l npm-install -- npm install
    ```
 
 2. **延迟30分钟后执行**：
    ```bash
-   pueue add -d "30 minutes" "make build"
+   pueue add -d "30 minutes" -- make build
    ```
 
 3. **在指定目录运行**：
    ```bash
-   pueue add -w /path/to/project "./script.sh"
+   pueue add -w /path/to/project -- ./script.sh
    ```
 
 4. **等待任务完成后执行另一个**：
    ```bash
-   pueue add -a 1 "npm run build"
+   pueue add -a 1 -- npm run build
    ```
 
 5. **立即开始任务**：
    ```bash
-   pueue add -i "npm run dev"
+   pueue add -i -- npm run dev
    ```
 
 6. **查看最近20行日志**：
